@@ -1,4 +1,5 @@
 centos6.8:
+netstat -nltp
 service mysqld start
 service mysqld restart
 service mysqld stop
@@ -8,7 +9,57 @@ service network restart
 mysql -uroot -h 39.96.39.7 -p
 kill -9 PID
 which python
-
+command --help
+groupadd 组名
+groupdel 组名
+ln -s 被链接的源文件 链接文件
+find [路径] -name "*.py"
+tree [目录名] -d：只显示目录
+cp 源文件 目标文件
+mv 源文件 目标文件
+grep 搜索文本 文件名
+more 文件名
+date	查看系统时间
+ssh 用户名@ip
+scp 用户名@ip:文件名或路径 用户名@ip:文件名或路径
+执行 `ssh-keygen` 即可生成 SSH 钥匙，一路回车即可
+执行 `ssh-copy-id -p port user@remote`，上传公钥到服务器，可以让远程服务器记住我们的公钥
+`which` 命令可以查看执行命令所在位置
+`>` 表示输出，会覆盖文件原有的内容
+`>>` 表示追加，会将内容追加到已有文件的末尾
+`|` 管道 
+ifconfig						查看网卡配置信息
+ifconfig | grep inet			查看网卡对应的 IP 地址
+shutdown -r now					重新启动操作系统，其中 now 表示现在
+shutdown now					立刻关机，其中 now 表示现在
+shutdown +10					系统再过十分钟后自动关机
+shutdown 20:25					系统在今天的 20:25 会关机
+shutdown -c						取消之前指定的关机计划
+ps aux							`process status` 查看进程的详细状况
+top								动态显示运行中的进程并且排序
+kill [-9] 进程代号				终止指定代号的进程，`-9` 表示强行终止
+df -h							`disk free`	显示磁盘剩余空间	
+du -h [目录名]					`disk usage` 显示目录下的文件大小
+cat /etc/group					确认组信息
+chgrp -R 组名 文件/目录名		递归修改文件/目录的所属组
+useradd -m -g 组 新建用户名		添加新用户	-m	自动建立用户家目录	-g	指定用户所在的组，否则会建立一个和同名的组
+passwd 用户名					设置用户密码，如果是普通用户，直接用 passwd 可以修改自己的账户密码
+userdel -r 用户名				删除用户	-r	选项会自动删除用户家目录
+usermod -g 组 用户名			修改用户的主组
+usermod -G 组 用户名			修改用户的附加组
+usermod -s /bin/bash 用户名		修改用户登录 Shell
+chown 用户名 文件名|目录名		修改文件|目录的拥有者
+chgrp -R 组名 文件名|目录名		递归修改文件|目录的组
+chmod -R 755 文件名|目录名		递归修改文件权限
+chmod +/-rwx 文件名|目录名		直接修改文件|目录的 读|写|执行 权限，但是不能精确到 拥有者|组|其他
+man command
+	操作键		功能
+	空格键		显示手册页的下一屏
+	Enter键		一次滚动手册页的一行	
+	b键			回滚一屏	
+	f键			前滚一屏	
+	q键			退出	
+	/word		搜索 **word** 字符串
 压缩： gzip  2019_03_25_182426.sql 2019_03_25_182426.sql.gz
 解压： gunzip 2019_03_25_182426.sql.gz
 打包：tar -zcvf 2019_03_25_182426.tar.gz 2019_03_25_182426
