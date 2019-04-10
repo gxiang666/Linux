@@ -1,0 +1,127 @@
+centos6.8:
+service mysqld start
+service mysqld restart
+service mysqld stop
+chkconfig <service> on
+chkconfig <service> off
+service network restart
+mysql -uroot -h 39.96.39.7 -p
+kill -9 PID
+which python
+
+压缩： gzip  2019_03_25_182426.sql 2019_03_25_182426.sql.gz
+解压： gunzip 2019_03_25_182426.sql.gz
+打包：tar -zcvf 2019_03_25_182426.tar.gz 2019_03_25_182426
+解包：tar -zxvf 2019_03_25_182426.tar.gz 
+mysql的备份数据库的指令:
+	mysqldump -u${DB_USER} -p${DB_PWD} --host=$HOST $DATABASE > $BACKUP/$DATETIME/$DATATIME.sql
+	mysqldump -u${DB_USER} -p${DB_PWD} --host=$HOST $DATABASE | gzip > $BACKUP/$DATETIME/$DATATIME.sql.gz
+crond任务调度：
+	crontab -e: 编辑crontab定时任务
+	crontab -l: 查询crontab任务列表
+	crontab -r: 终止所有crontab任务
+查看服务：
+	---netstat -nltp | grep xxx  
+	---ss -tanlp
+查看系统中文件的使用情况:df -h
+查看当前目录下各个文件及目录占用空间大小:du -sh *
+/home/gaoxiang/app/zookeeper-3.4.6/bin/zkServer.sh start
+
+==============================================================================
+scp -r zookeeper-3.4.6/  hadoop107:/home/gaoxiang/app/   会把zookeeper-3.4.6/下的文件复制到app下不带文件夹
+=====scp -r zookeeper-3.4.6/  hadoop107:/home/gaoxiang/app/zookeeper-3.4.6/  
+=====scp -r zookeeper-3.4.6/ hadoop106:/home/gaoxiang/app  把zookeeper-3.4.6/文件夹复制到APP下
+
+==============================================================================
+sudo vim /etc/hosts
+	127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+	::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+	192.168.209.101 hadoop101
+	192.168.209.102 hadoop102
+	192.168.209.103 hadoop103
+	192.168.209.104 hadoop104
+	192.168.209.105 hadoop105
+	192.168.209.106 hadoop106
+	192.168.209.107 hadoop107
+==============================================================================
+sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0
+	DEVICE=eth0
+	TYPE=Ethernet
+	UUID=90a864b5-f94c-41e9-9e4d-ed9ea2a253e9
+	ONBOOT=yes
+	NM_CONTROLLED=yes
+	BOOTPROTO=static
+	HWADDR=00:0C:29:32:48:E2
+	DEFROUTE=yes
+	PEERDNS=yes
+	PEERROUTES=yes
+	IPV4_FAILURE_FATAL=yes
+	IPV6INIT=no
+	NAME="System eth0"
+	LAST_CONNECT=1554125237
+	IPADDR=192.168.209.101
+	GATEWAY=192.168.209.2
+	DNS1=192.168.209.2
+==============================================================================
+sudo vim /etc/sysconfig/network
+	NETWORKING=yes
+	HOSTNAME=Hadoop101
+===============================================================================
+sudo vim /etc/profile
+	export JAVA_HOME=/home/gaoxiang/app/jdk1.8.0_144
+	export HADOOP_HOME=/home/gaoxiang/app/hadoop-2.7.2
+	export HIVE_HOME=/home/gaoxiang/app/hive-0.12.0
+	export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin
+source /etc/profile
+================================================================================
+[] 条件判断，距离括号的左右必须有一个空格，if的关键字必须和空格有一个空格
+ #!/bin/bash
+ 
+if [ "100" = "100" ]
+then
+        echo "equal"
+fi
+================================================================= 
+字符串比较 = 
+大于 -gt (greater than) 
+小于 -lt (less than) 
+大于或等于 -ge (greater than or equal) 
+等于 -eq(equal)
+小于或等于 -le (less than or equal) 
+不相等 -ne （not equal）
+===================================================================
+#!/bin/bash
+#完成数据库的备份
+BACKUP=/data/backup/db
+DATETIME=$(date +%Y_%m_%d_%H%M%S)
+#可以输出变量调试
+#echo ${DATETIME}
+echo "=========开始备份========"
+echo "=========备份的路径是 $BACKUP/$DATATIME.tar.gz"
+#主机
+HOST=localhost
+#用户名
+DB_USER=root
+#密码
+DB_PWD=root
+#备份的数据库名
+DATABASE=trace
+#创建备份的路径
+#如果备份的路径文件夹存在，就使用，不存在就创建
+[ ! -d "$BACKUP/$DATETIME" ] && mkdir -p "$BACKUP/$DATETIME"
+#执行mysql的备份数据库的指令
+mysqldump -u${DB_USER} -p${DB_PWD} --host=$HOST $DATABASE | gzip > $BACKUP/$DATETIME/$DATETIME.sql.gz
+#打包备份文件
+cd $BACKUP
+tar -zcvf $DATETIME.tar.gz $DATETIME
+#删除临时目录
+rm -rf $BACKUP/$DATETIME
+#删除10天前的备份文件
+find $BACKUP -mtime +10 -name "*.tar.gz" exec rm -rf {} \;
+echo "============备份文件成功"
+
+============================================================================
+centos7.3:
+	vim /etc/hostname ：
+	systemctl disable httpd.service:关闭开机自启动
+	systemctl stop httpd.service
