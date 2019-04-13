@@ -1,0 +1,109 @@
+docker version
+docker info
+docker --help
+docker images
+docker search 某个XXX镜像名字
+docker pull 镜像名字[:TAG]
+docker rmi -f 镜像名1:TAG 镜像名2:TAG
+docker start 容器ID或者容器名
+docker restart 容器ID或者容器名
+docker stop 容器ID或者容器名
+docker kill 容器ID或者容器名
+docker rm 容器ID
+启动交互式容器:						docker run -it centos /bin/bash 
+启动守护式容器：					docker run -d -p 3306:3306 --name mysql01 mysql:5.6
+查看容器日志：						docker logs -f -t --tail 容器ID
+查看容器内运行的进程：				docker top 容器ID
+查看容器内部细节：					docker inspect 容器ID
+进入正在运行的容器并以命令行交互：	docker exec -it 容器ID /bin/bash
+重新进入:							docker attach 容器ID
+从容器内拷贝文件到主机上:			docker cp  容器ID:容器内路径 目的主机路径
+
+docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+	--name="容器新名字": 为容器指定一个名称；
+	-d: 后台运行容器，并返回容器ID，也即启动守护式容器；
+	-i：以交互模式运行容器，通常与 -t 同时使用；
+	-t：为容器重新分配一个伪输入终端，通常与 -i 同时使用；
+	-P: 随机端口映射；
+	-p: 指定端口映射，有以下四种格式
+		  ip:hostPort:containerPort
+		  ip::containerPort
+	
+docker ps [OPTIONS]
+	-a :列出当前所有正在运行的容器+历史上运行过的
+	-l :显示最近创建的容器。
+	-n：显示最近n个创建的容器。
+	-q :静默模式，只显示容器编号。
+	--no-trunc :不截断输出。
+
+退出容器：
+	exit：		容器停止退出
+	ctrl+P+Q：	容器不停止退出
+	
+Docker镜像commit操作:
+	docker commit提交容器副本使之成为一个新的镜像
+	docker commit -m=“提交的描述信息” -a=“作者” 容器ID 要创建的目标镜像名:[标签名]
+	docker search tomcat
+	docker pull tomcat
+	docker run -it -p 8080:8080 --name tomcat01 tomcat
+	故意删除上一步镜像生产tomcat容器的文档,以它为模板commit一个没有doc的tomcat新镜像gaoxiang/tomcat
+	docker commit -m=“del tomcat docs” -a=“gaoxiang” d536a5c3 gaoxiang/tomcat:1.2
+	docker images:会出现创建的镜像
+	
+Docker容器数据卷：
+	容器内添加：		
+		docker run -it -v /宿主机绝对路径目录:/容器内目录      镜像名
+		查看数据卷是否挂载成功：	docker inspect 容器ID
+		命令(带权限)：				 docker run -it -v /宿主机绝对路径目录:/容器内目录:ro 镜像名
+	DockerFile添加：
+		根目录下新建mydocker文件夹并进入
+		可在Dockerfile中使用VOLUME指令来给镜像添加一个或多个数据卷
+		File构建：vim dockerfile2
+				# volume test
+				FROM centos
+				VOLUME ["/dataVolumeContainer1","/dataVolumeContainer2"]
+				CMD echo "finished,--------success1"
+				CMD /bin/bash
+		build后生成镜像,获得一个新镜像gaoxiang/centos：docker build -f /mydocker/dockerfile2 -t gaoxiang/centos
+		查看创建的镜像：docker images
+		run容器：		docker run -it gaoxiang/centos /bin/bash
+		Docker挂载主机目录Docker访问出现cannot open directory .: Permission denied
+		解决办法：在挂载目录后多加一个--privileged=true参数即可
+
+DockerFile解析:
+	构建三步骤:编写Dockerfile文件->docker build->docker run
+	自定义镜像Tomcat9:
+		mkdir -p /gx/mydockerfile/tomcat9
+		在上述目录下touch c.txt
+		将jdk和tomcat安装的压缩包拷贝进上一步目录
+		在/gx/mydockerfile/tomcat9目录下新建Dockerfile文件:
+			FROM         centos
+			MAINTAINER    gaoxiang<gaoxiangbs@126.com>
+			#把宿主机当前上下文的c.txt拷贝到容器/usr/local/路径下
+			COPY c.txt /usr/local/cincontainer.txt
+			#把java与tomcat添加到容器中
+			ADD jdk-8u171-linux-x64.tar.gz /usr/local/
+			ADD apache-tomcat-9.0.8.tar.gz /usr/local/
+			#安装vim编辑器
+			RUN yum -y install vim
+			#设置工作访问时候的WORKDIR路径，登录落脚点
+			ENV MYPATH /usr/local
+			WORKDIR $MYPATH
+			#配置java与tomcat环境变量
+			ENV JAVA_HOME /usr/local/jdk1.8.0_171
+			ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+			ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.8
+			ENV CATALINA_BASE /usr/local/apache-tomcat-9.0.8
+			ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin
+			#容器运行时监听的端口
+			EXPOSE  8080
+			#启动时运行tomcat
+			# ENTRYPOINT ["/usr/local/apache-tomcat-9.0.8/bin/startup.sh" ]
+			# CMD ["/usr/local/apache-tomcat-9.0.8/bin/catalina.sh","run"]
+			CMD /usr/local/apache-tomcat-9.0.8/bin/startup.sh && tail -F /usr/local/apache-tomcat-9.0.8/bin/logs/catalina.out
+		构建:docker build -t gxtomcat9
+		run容器：	docker run -d -p 9080:8080 --name myt9 -v /gx/mydockerfile/tomcat9/test:/usr/local/apache-tomcat-9.0.8/webapps/test -v /gx/mydockerfile/tomcat9/tomcat9logs/:/usr/local/apache-tomcat-9.0.8/logs --privileged=true gxtomcat9
+
+本地镜像发布到阿里云:
+	
+		
