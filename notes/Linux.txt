@@ -1,4 +1,7 @@
 centos6.8:
+yum -y install vim
+yum -y install net-tools
+yum -y install tree
 netstat -nltp
 ps -ef | grep mysql
 service mysqld start
@@ -192,6 +195,9 @@ Mysql:
 	service mysql start
 	service mysql stop 
 	修改字符集问题
+		查看字符集
+		show variables like 'character%'; 
+		show variables like '%char%';
 		5.5     cp /usr/share/mysql/my-huge.cnf /etc/my.cnf
 		5.6		cp /usr/share/mysql/my-default.cnf /etc/my.cnf
 		修改my.cnf文件：
