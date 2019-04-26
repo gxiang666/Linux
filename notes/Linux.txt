@@ -1,4 +1,6 @@
 centos6.8:
+wget url
+crul http://127.0.0.1:8000/
 yum -y install vim
 yum -y install net-tools
 yum -y install tree
