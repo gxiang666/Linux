@@ -1,9 +1,9 @@
-#~/.vimrc
+" ~/.vimrc
 
-#显示行号
+" 显示行号
 set nu
 
-#设置tab键为4格
+" 设置tab键为4格
 set ts=4
 set expandtab
 set autoindent
