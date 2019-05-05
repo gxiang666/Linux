@@ -1,0 +1,49 @@
+docker pull mongo （拉取镜像 默认最新版本）
+
+docker images （查看镜像）
+
+docker run -p 27017:27017 -td mongo （启动镜像）
+
+docker ps （查看启动的镜像）
+
+docker exec -it 镜像id /bin/bash （进入容器）
+
+mongo （进入mongodb）
+
+use admin
+db.createUser(
+{
+user: "admin",
+pwd: "123456",
+roles: [ { role: "root", db: "admin" } ]
+}
+);
+
+mongo --port 27017 -u admin -p 123456 --authenticationDatabase admin （以刚建立的用户登录数据库 创建test用户）
+
+use test
+db.createUser(
+{
+user: "tester",
+pwd: "123456",
+roles: [
+{ role: "readWrite", db: "test" }
+]
+}
+);
+
+exit
+
+mongo -u tester -p --authenticationDatabase test (以刚创建的test用户登录)
+
+ 
+
+mongodb其他操作命令
+
+show dbs （显示数据库）
+
+use  dbname (切换到数据库)
+
+show collections （显示表）
+
+db.find.表名 （查看表数据）
