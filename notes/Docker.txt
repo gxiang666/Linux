@@ -1,3 +1,32 @@
+centos6.8安装docker
+	1.安装依赖包					yum install -y epel-release
+	2.安装Docker					yum install -y docker-io
+	3.查看配置文件				cat /etc/sysconfig/docker
+	4.启动后台服务				service docker start
+	5.查看版本					docker version
+
+centos7安装docker
+	1.安装gcc				yum -y install gcc gcc-c++
+	2.卸载旧版本				yum -y remove docker docker-common docker-selinux docker-engine
+	3.安装需要的软件包		yum install -y yum-utils device-mapper-persistent-data lvm2
+	4.设置stable镜像仓库 		yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+	5.更新yum软件包索引		yum makecache fast
+	6.安装docker 			yum -y install docker-ce
+	7.启动docker 			systemctl start docker
+	8.查看版本				docker version
+	9.配置镜像加速			
+							mkdir -p /etc/docker
+							vim /etc/docker/daemon.json 
+							{
+							  "registry-mirrors": ["https://lw6hnysy.mirror.aliyuncs.com"]
+							}
+							sudo systemctl daemon-reload
+							sudo systemctl restart docker
+	10.卸载docker
+							systemctl stop docker
+							yum -y remove docker-ce
+							rm -rf /var/lib/docker
+
 docker version
 docker info
 docker --help
@@ -11,13 +40,13 @@ docker stop 容器ID或者容器名
 docker kill 容器ID或者容器名
 docker rm 容器ID
 启动交互式容器:						docker run -it centos /bin/bash 
-启动守护式容器：					docker run -d -p 3306:3306 --name mysql01 mysql:5.6
+启动守护式容器：						docker run -d -p 3306:3306 --name mysql01 mysql:5.6
 查看容器日志：						docker logs -f -t --tail 容器ID
 查看容器内运行的进程：				docker top 容器ID
 查看容器内部细节：					docker inspect 容器ID
-进入正在运行的容器并以命令行交互：	docker exec -it 容器ID /bin/bash
+进入正在运行的容器并以命令行交互：		docker exec -it 容器ID /bin/bash
 重新进入:							docker attach 容器ID
-从容器内拷贝文件到主机上:			docker cp  容器ID:容器内路径 目的主机路径
+从容器内拷贝文件到主机上:				docker cp  容器ID:容器内路径 目的主机路径
 
 docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 	--name="容器新名字": 为容器指定一个名称；
