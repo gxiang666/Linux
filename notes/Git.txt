@@ -1,8 +1,11 @@
+0.添加git全局配置
+	git config --global user.name "gxiang666"
+	git config --global user.email "1528357474@qq.com"
 1.创建版本库
 	目文件夹内，执行:  git  init
 2.提交文件
 	新建文件后，通过git  status  进行查看文件状态
-	将文件添加到暂存区git  add  文件名
+	将文件添加到暂存区git  add  文件名    git add . 添加当前文件夹
 	提交文件到本地库  git  commit
 	编写注释 ，完成提交
 	或者也可以git  commit  –m “注释内容”, 直接带注释提交
@@ -20,37 +23,54 @@
 7.删除某个文件
 	 先删除文件
 	 再git add 再提交
+8.分支
+	创建分支
+		git  branch  <分支名>
+		git branch –v  查看分支
+	切换分支
+		git checkout  <分支名>
+		一步完成： git checkout  –b  <分支名>
+	合并分支
+		先切换到主干   git  checkout  master
+		git  merge  <分支名>
+9.删除git缓存
+	git rm -r –cached .
 
-创建分支
-	git  branch  <分支名>
-	git branch –v  查看分支
-切换分支
-	git checkout  <分支名>
-	一步完成： git checkout  –b  <分支名>
-合并分支
-	先切换到主干   git  checkout  master
-	git  merge  <分支名>
-
-git config --global user.name "gxiang666"
-git config --global user.email "1528357474@qq.com"
 git  remote  add  origin  https://github.com/user111/Helloworld.git
 git  push -u origin  master:第一次push,加上-u
-git add .
-git commit -m "init yml"
-git  push origin  master
-git  clone  https://github.com/user111/Helloworld.git   hello_world
-git pull origin  master
 git add --all .
-git add .
 
-
-
-创建SSH Key： ssh-keygen -t rsa -C   1528357474@qq.com
+创建SSH Key： ssh-keygen -t rsa -C 1528357474@qq.com
 测试连通性：ssh -T git@github.com
-git remote add  originssh  git@github.com:gxiang666/Django_file.git
-git push originssh master
-git pull originssh master
+	git reflog
+	git log --pretty=oneline
+	git log --oneline
+	git reset --hard hashval
+	git reset --hard HEAD^
+	git reset --hard HEAD~3
+	git clone https://github.com/zce/music-player.git -b vue --depth 1
+	git tag
+	git tag <tagname>
+	git tag -a <tagname> -m "blablabla..."
+	命令git push origin <tagname>可以推送一个本地标签；
+	命令git push origin --tags可以推送全部未推送过的本地标签；
+	命令git tag -d <tagname>可以删除一个本地标签；
+	命令git push origin :refs/tags/<tagname>可以删除一个远程标签。
 
+
+origin:代表自己仓库，upstream代表fork的仓库
+查看你的远程仓库的路径
+	git remote -v
+添加主repo为上游代码库
+	git remote add upstream fork_git_address
+抓取原仓库的修改文件
+	git fetch upstream master
+#切换到my_master分支。
+	#git checkout master
+my合并远程的master分支：
+	git merge upstream/master
+push到我的GitHub
+	git push origin master
 
 
 在Eclipse中忽略特定的文件
@@ -108,38 +128,6 @@ git pull originssh master
 	[remote "origin"]
 		url = https://github.com/gxiang666/test-3.git
 		fetch = +refs/heads/*:refs/remotes/origin/*
-	[branch "master"]
-		remote = origin
-		merge = refs/heads/master
-		rebase = false
-
-
-
-待定：
-1.	[core]
-		symlinks = false
-		repositoryformatversion = 0
-		filemode = false
-		logallrefupdates = true
-	[remote "origin"]
-		url = https://github.com/gxiang666/test-3.git
-		fetch = +refs/heads/*:refs/remotes/origin/*
-		push = refs/heads/master:refs/heads/master
-	[branch "master"]
-		remote = origin
-		merge = refs/heads/master
-		rebase = false
-
-2.
-	[core]
-		symlinks = false
-		repositoryformatversion = 0
-		filemode = false
-		logallrefupdates = true
-	[remote "origin"]
-		url = https://github.com/gxiang666/test-3.git
-		fetch = +refs/heads/*:refs/remotes/origin/*
-		push = refs/heads/master:refs/heads/master
 	[branch "master"]
 		remote = origin
 		merge = refs/heads/master

@@ -1,6 +1,6 @@
 centos6.8:
-wget url
-crul http://127.0.0.1:8000/
+wget url 							# 下载
+crul http://127.0.0.1:8000/			# 访问网页
 yum -y install vim
 yum -y install net-tools
 yum -y install tree
@@ -81,17 +81,30 @@ crond任务调度：
 	crontab -l: 查询crontab任务列表
 	crontab -r: 终止所有crontab任务
 查看服务：
-	---netstat -nltp | grep xxx  
-	---ss -tanlp
+	netstat -nltp | grep xxx  
+	ss -tanlp
 查看系统中文件的使用情况:df -h
 查看当前目录下各个文件及目录占用空间大小:du -sh *
 /home/gaoxiang/app/zookeeper-3.4.6/bin/zkServer.sh start
+scp -r zookeeper-3.4.6/  hadoop107:/home/gaoxiang/app/   
 
-==============================================================================
-scp -r zookeeper-3.4.6/  hadoop107:/home/gaoxiang/app/   会把zookeeper-3.4.6/下的文件复制到app下不带文件夹
-=====scp -r zookeeper-3.4.6/  hadoop107:/home/gaoxiang/app/zookeeper-3.4.6/  
-=====scp -r zookeeper-3.4.6/ hadoop106:/home/gaoxiang/app  把zookeeper-3.4.6/文件夹复制到APP下
+后台运行java微服务
+=======================================================================
+	nohup java -jar test.jar > temp.txt &
+	nohup java -jar hello-0.0.1-SNAPSHOT.jar >  temp.txt &
 
+通过建立软连接变为全局
+==========================================================================
+	ln -s /usr/local/application/nodejs/bin/npm /usr/local/bin/
+	ln -s /usr/local/application/nodejs/bin/node /usr/local/bin/
+
+
+设置自启动服务
+=============================================================================
+	修改linux 启动脚本/etc/rc.d/rc 
+	加入:/usr/local/nginx/sbin/nginx
+
+本地域名映射
 ==============================================================================
 sudo vim /etc/hosts
 	127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
@@ -103,6 +116,8 @@ sudo vim /etc/hosts
 	192.168.209.105 hadoop105
 	192.168.209.106 hadoop106
 	192.168.209.107 hadoop107
+
+固定IP
 ==============================================================================
 sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0
 	DEVICE=eth0
@@ -110,7 +125,7 @@ sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0
 	UUID=90a864b5-f94c-41e9-9e4d-ed9ea2a253e9
 	ONBOOT=yes
 	NM_CONTROLLED=yes
-	BOOTPROTO=static
+	BOOTPROTO=static					####
 	HWADDR=00:0C:29:32:48:E2
 	DEFROUTE=yes
 	PEERDNS=yes
@@ -118,14 +133,39 @@ sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0
 	IPV4_FAILURE_FATAL=yes
 	IPV6INIT=no
 	NAME="System eth0"
-	LAST_CONNECT=1554125237
-	IPADDR=192.168.209.101
-	GATEWAY=192.168.209.2
-	DNS1=192.168.209.2
+	LAST_CONNECT=1554125237				
+	IPADDR=192.168.209.101				####
+	GATEWAY=192.168.209.2				####
+	DNS1=192.168.209.2					####
+
+修改主机名
 ==============================================================================
 sudo vim /etc/sysconfig/network
 	NETWORKING=yes
 	HOSTNAME=Hadoop101
+
+ssh免密码登陆配置
+===============================================================================
+ssh-keygen.sh -t rsa
+~/.ssh 
+	id_ras   id_rsa.pub  known_hosts
+ssh-copy-id  desthost(要免密登录的IP) 或scp +  cat >> 命令 
+
+
+让普通用户具备sudo权限：
+==============================================================================
+切换到root： vim /etc/sudoers
+	root    	ALL=(ALL) ALL
+	gaoxiang  	ALL=(ALL)  All  (添加一行)
+
+让Linux启动不要启动图形界面
+============================================================================
+sudo vim /etc/inittab
+	将启动级别改为3：id：	id:3:initdefault:
+启动图形界面：startx 		sudo init 5	
+
+
+添加环境变量
 ===============================================================================
 sudo vim /etc/profile
 	export JAVA_HOME=/home/gaoxiang/app/jdk1.8.0_144
@@ -133,6 +173,8 @@ sudo vim /etc/profile
 	export HIVE_HOME=/home/gaoxiang/app/hive-0.12.0
 	export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin
 source /etc/profile
+
+
 ================================================================================
 [] 条件判断，距离括号的左右必须有一个空格，if的关键字必须和空格有一个空格
  #!/bin/bash
