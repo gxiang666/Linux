@@ -1,6 +1,7 @@
 centos6.8:
 wget url 							# 下载
 crul http://127.0.0.1:8000/			# 访问网页
+ip addr 							# 查看ip（ifconfig）
 yum -y install vim
 yum -y install net-tools
 yum -y install tree
@@ -29,6 +30,7 @@ mv 源文件 目标文件
 grep 搜索文本 文件名
 more 文件名
 date	查看系统时间
+runlevel 查看系统的运行级别
 ssh 用户名@ip
 scp 用户名@ip:文件名或路径 用户名@ip:文件名或路径
 执行 `ssh-keygen` 即可生成 SSH 钥匙，一路回车即可
@@ -83,6 +85,8 @@ crond任务调度：
 查看服务：
 	netstat -nltp | grep xxx  
 	ss -tanlp
+查看开放端口：	firewall-cmd --list-all
+
 查看系统中文件的使用情况:df -h
 查看当前目录下各个文件及目录占用空间大小:du -sh *
 /home/gaoxiang/app/zookeeper-3.4.6/bin/zkServer.sh start
@@ -110,12 +114,6 @@ sudo vim /etc/hosts
 	127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 	::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 	192.168.209.101 hadoop101
-	192.168.209.102 hadoop102
-	192.168.209.103 hadoop103
-	192.168.209.104 hadoop104
-	192.168.209.105 hadoop105
-	192.168.209.106 hadoop106
-	192.168.209.107 hadoop107
 
 固定IP
 ==============================================================================
@@ -137,6 +135,35 @@ sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0
 	IPADDR=192.168.209.101				####
 	GATEWAY=192.168.209.2				####
 	DNS1=192.168.209.2					####
+
+redis集群
+=============================================================================
+创建集群
+/opt/redis-5.0.5/src/redis-cli --cluster create 39.96.39.7:7001 39.96.39.7:7002 39.96.39.7:7003 39.96.39.7:7004 39.96.39.7:7005 39.96.39.7:7006 --cluster-replicas 1
+
+连接集群
+/opt/redis-5.0.5/src/redis-cli -c -p 7001 --raw#-c表示连集群 --raw中文显示
+
+关闭集群
+/opt/redis-5.0.5/src/redis-cli -c -p 7001 shutdown
+/opt/redis-5.0.5/src/redis-cli -c -p 7002 shutdown
+/opt/redis-5.0.5/src/redis-cli -c -p 7003 shutdown
+/opt/redis-5.0.5/src/redis-cli -c -p 7004 shutdown
+/opt/redis-5.0.5/src/redis-cli -c -p 7005 shutdown
+/opt/redis-5.0.5/src/redis-cli -c -p 7006 shutdown
+
+/opt/redis-5.0.5/src/redis-server ./7001/redis.conf 
+/opt/redis-5.0.5/src/redis-server ./7002/redis.conf 
+/opt/redis-5.0.5/src/redis-server ./7003/redis.conf 
+/opt/redis-5.0.5/src/redis-server ./7004/redis.conf 
+/opt/redis-5.0.5/src/redis-server ./7005/redis.conf 
+/opt/redis-5.0.5/src/redis-server ./7006/redis.conf 
+
+
+
+vim
+==============================================================================
+:%s/7001/7004/g#所有7001的字符串替换为7004
 
 修改主机名
 ==============================================================================
@@ -222,12 +249,49 @@ rm -rf $BACKUP/$DATETIME
 find $BACKUP -mtime +10 -name "*.tar.gz" exec rm -rf {} \;
 echo "============备份文件成功"
 
-============================================================================
+
 centos7.3:
+============================================================================
+修改主机名：
 	vim /etc/hostname ：
-	systemctl disable httpd.service:关闭开机自启动
+		gaoxiang
+
+让普通用户具备sudo权限：
+	切换到root： vim /etc/sudoers
+	root    	ALL=(ALL) ALL
+	gaoxiang  	ALL=(ALL)  All  (添加一行)
+
+修改运行级别
+	在终端中输入： init 3
+	systemctl set-default multi-user.target
+
+关闭开机自启动
+	systemctl disable httpd.service
 	systemctl stop httpd.service
-	
+
+固定ip
+	sudo vim /etc/sysconfig/network-scripts/ifcfg-ens33
+		TYPE=Ethernet
+		PROXY_METHOD=none
+		BROWSER_ONLY=no
+		BOOTPROTO=static							###
+		DEFROUTE=yes
+		IPV4_FAILURE_FATAL=no
+		IPV6INIT=yes
+		IPV6_AUTOCONF=yes
+		IPV6_DEFROUTE=yes
+		IPV6_FAILURE_FATAL=no
+		IPV6_ADDR_GEN_MODE=stable-privacy
+		NAME=ens33
+		UUID=6db4e986-dc32-4314-94c6-2030ffffd08f
+		DEVICE=ens33
+		ONBOOT=yes###
+		IPADDR=192.168.209.101						###
+		NETMASK=255.255.255.0						###
+		GATEWAY=192.168.209.2						###
+		DNS1=192.168.209.2							###
+
+
 =====================================================================================
 Mysql:
 	rpm -qa | grep mysql								查询mysql是否安装
