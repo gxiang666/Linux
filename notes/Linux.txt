@@ -1,4 +1,12 @@
 centos6.8:
+
+make && make install 同时执行
+清理缓存：（; 顺序执行）
+	sync; echo 1 > /proc/sys/vm/drop_caches       
+	sync; echo 2 > /proc/sys/vm/drop_caches
+	sync; echo 2 > /proc/sys/vm/drop_caches
+free -m 							# 内存使用情况
+whereis mysql 						# mysql文件位置
 uname -r 							# 查看内核版本
 wget url 							# 下载
 crul http://127.0.0.1:8000/			# 访问网页
